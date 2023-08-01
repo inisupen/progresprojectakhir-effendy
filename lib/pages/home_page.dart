@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_uts/pages/login_page.dart';
 
 import '../tab/burger_tab.dart';
 import '../tab/donut_tab.dart';
@@ -15,6 +16,15 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  List<Map<String, dynamic>> donutsData = [];
+
+  // Function to handle the donut data fetched from DonutTab
+  void handleDonutsData(List<Map<String, dynamic>> donuts) {
+    setState(() {
+      donutsData = donuts;
+    });
+  }
+
   // my tabs
   List<Widget> myTabs = const [
     // donut tab
@@ -60,7 +70,15 @@ class _HomePageState extends State<HomePage> {
                 size: 36,
               ),
               onPressed: () {
-                // open drawer
+                ListTile(
+                  leading: Icon(Icons.logout),
+                  title: Text('Logout'),
+                  onTap: () {
+                    // Navigator.push(context,
+                    //     MaterialPageRoute(builder: (context) => LoginPage()));
+                    _showLogoutDialog();
+                  },
+                ); // open drawer
               },
             ),
           ),
@@ -108,7 +126,9 @@ class _HomePageState extends State<HomePage> {
               child: TabBarView(
                 children: [
                   // donut page
-                  DonutTab(),
+                  DonutTab(
+                    onDataFetched: handleDonutsData,
+                  ),
 
                   // burger page
                   BurgerTab(),
@@ -127,6 +147,44 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
+    );
+  }
+
+  void _showLogoutDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Logout"),
+          content: Text("Are you sure you want to logout?"),
+          actions: [
+            TextButton(
+              child: Text("Cancel"),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+            ),
+            TextButton(
+              child: Text("Logout"),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+                _logout(); // Call the logout function
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _logout() {
+    // Add your logout logic here, if any
+    // For example, you may clear user session, preferences, etc.
+
+    // Navigate back to the LoginPage and replace the current route
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => LoginPage()),
     );
   }
 }
